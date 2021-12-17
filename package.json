@@ -7,6 +7,10 @@
     "name": "Cale Teeter",
     "email": "cale.teeter@microsoft.com"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/caleteeter/nonce-js.git"
+  },
   "license": "MIT",
   "scripts": {
     "prepublishOnly": "npm run compile",
