@@ -1,22 +1,30 @@
 // file nonce-mgr.ts
 
 import Web3 from "web3";
+import { IBlockchainContext } from "./models/iBlockchainContext";
 
-const nonces: Map<string, number> = new Map();
+export class NonceManager {
 
-export async function getNonce(rpcEndpoint: string, address: string): Promise<number | undefined> {
-    if (nonces.has(address)) {
-        let currentNonce = nonces.get(address);
-        nonces.set(address, currentNonce === undefined ? 1 : currentNonce++)
-        return nonces.get(address);
+    readonly _nonces: Map<string, number>;
+
+    constructor() {
+        this._nonces = new Map();
     }
 
-    let currentNonce: number = await getNonceFromChain(rpcEndpoint, address);
-    nonces.set(address, currentNonce + 1);
-    return nonces.get(address);
-}
+    async getNonce(context: IBlockchainContext): Promise<number | undefined> {
+        if (this._nonces.has(context.accountAddress)) {
+            let currentNonce = this._nonces.get(context.accountAddress);
+            this._nonces.set(context.accountAddress, currentNonce === undefined ? 1 : currentNonce + 1)
+            return this._nonces.get(context.accountAddress);
+        }
 
-async function getNonceFromChain(rpcEndpoint: string, address: string): Promise<number> {
-    const node: Web3 = new Web3(new Web3.providers.HttpProvider(rpcEndpoint));
-    return await node.eth.getTransactionCount(address);
+        let currentNonce: number = await this.getNonceFromChain(context.rpcEndpoint, context.accountAddress);
+        this._nonces.set(context.accountAddress, currentNonce + 1);
+        return this._nonces.get(context.accountAddress);
+    }
+
+    private async getNonceFromChain(rpcEndpoint: string, address: string): Promise<number> {
+        const node: Web3 = new Web3(new Web3.providers.HttpProvider(rpcEndpoint));
+        return await node.eth.getTransactionCount(address, "pending");
+    }
 }
