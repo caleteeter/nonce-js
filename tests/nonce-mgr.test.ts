@@ -1,15 +1,27 @@
 // file nonce-mgr.test.ts
 
-import { getNonce } from "../src/nonce-mgr";
+import { mock } from 'jest-mock-extended';
+import axios from 'axios';
+import { IBlockchainContext, NonceManager } from '../src/index';
 
-describe("Nonce manager module tests", () => {
-    it("should get a nonce for a new account", async () => {
-        let result = await getNonce("http://127.0.0.1:8545", "0x0000000000000000000000000000000000000000");
-        expect(result).toBe(1);
+let bc: IBlockchainContext;
+
+describe("Nonce manager tests", () => {
+    beforeAll(() => {
+        bc = mock<IBlockchainContext>({ rpcEndpoint: "", accountAddress: "" });
     });
 
-    it("should return a nonce higher than 1 for an existing account", async () => {
-        let result = await getNonce("http://127.0.0.1:8545", "0x52c0980d884dBB7455Fa288659Eb84e2EE3c3d5f");
-        expect(result).toBeGreaterThan(1);
+    it("Nonce should advance by one, from the nonce retrieved from chain", async () => {
+        axios.post = jest.fn().mockResolvedValue(JSON.parse('{"data": { "result": "3E7" }}'));
+        let nm = new NonceManager();
+        let result = await nm.getNonce(bc);
+        expect(result).toBe(1000);
+    });
+
+    it("Nonce should be 1 for a new account", async () => {
+        axios.post = jest.fn().mockResolvedValue(JSON.parse('{"data": { "result": "0" }}'));
+        let nm = new NonceManager();
+        let result = await nm.getNonce(bc);
+        expect(result).toBe(1);
     });
 });

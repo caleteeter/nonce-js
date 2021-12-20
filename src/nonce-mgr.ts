@@ -1,6 +1,5 @@
 // file nonce-mgr.ts
-
-import Web3 from "web3";
+import axios from 'axios';
 import { IBlockchainContext } from "./models/iBlockchainContext";
 
 export class NonceManager {
@@ -18,13 +17,13 @@ export class NonceManager {
             return this._nonces.get(context.accountAddress);
         }
 
-        let currentNonce: number = await this.getNonceFromChain(context.rpcEndpoint, context.accountAddress);
+        let currentNonce: number = await this.getNonceFromChain(context);
         this._nonces.set(context.accountAddress, currentNonce + 1);
         return this._nonces.get(context.accountAddress);
     }
 
-    private async getNonceFromChain(rpcEndpoint: string, address: string): Promise<number> {
-        const node: Web3 = new Web3(new Web3.providers.HttpProvider(rpcEndpoint));
-        return await node.eth.getTransactionCount(address, "pending");
+    private async getNonceFromChain(context: IBlockchainContext): Promise<number> {
+        let nonceResult = await axios.post(context.rpcEndpoint, `{"jsonrpc":"2.0","method":"eth_getTransactionCount","params":["${context.accountAddress}", "pending"],"id":1}`)
+        return parseInt(nonceResult.data.result, 16);
     }
 }
