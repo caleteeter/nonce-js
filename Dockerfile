@@ -2,11 +2,9 @@ FROM node:16
 
 WORKDIR /usr/src/api
 
-COPY api/package*.json ./
+COPY api/ ./
 
 RUN npm install
-
-COPY api/ ./
 
 RUN npm run build
 
