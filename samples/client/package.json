@@ -1,0 +1,13 @@
+{
+  "name": "nonce-js-client",
+  "version": "0.1.0",
+  "main": "dist/index",
+  "typings": "dist/index",
+  "license": "MIT",
+  "dependencies": {
+    "@windozer/nonce-js": "^0.1.5"
+  },
+  "scripts": {
+    "build": "tsc -p ./"
+  }
+}
