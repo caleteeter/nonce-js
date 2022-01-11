@@ -26,4 +26,17 @@ router.post('/', async (req, res, next) => {
     }
 });
 
+router.post('/unconfirmed', async (req, res, next) => {
+    const bc = new BlockchainContext(req.body.rpcEndpoint, req.body.accountAddress);
+    try {
+        if (req.query.nonceId !== undefined) {
+            let result = await nm.addUnconfirmedNonce(bc, parseInt((req.query.nonceId as string)));
+            return res.send(JSON.stringify(result));
+        }
+        return res.send("No nonce provided.");
+    } catch (err) {
+        next(err);
+    }
+});
+
 export default router;

@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@windozer/nonce-js": "^0.1.5",
+    "@windozer/nonce-js": "^0.1.7",
     "cors": "^2.8.5",
     "express": "^4.17.2"
   },
