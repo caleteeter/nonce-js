@@ -1,12 +1,14 @@
 // file nonce-mgr.ts
 import axios from 'axios';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 import { IBlockchainContext } from "./models/IBlockchainContext";
 import { NonceResponse } from "./models/NonceResponse";
 
 export class NonceManager {
 
-    readonly _nonces: Map<string, number>;
-    readonly _unconsumedNonces: Map<string, Array<number>>;
+    private _nonces: Map<string, number>;
+    private _unconsumedNonces: Map<string, Array<number>>;
 
     constructor() {
         this._nonces = new Map();
@@ -27,6 +29,17 @@ export class NonceManager {
         let currentNonce: number = await this.getNonceFromChain(context);
         this._nonces.set(context.accountAddress, currentNonce + 1);
         return this._nonces.get(context.accountAddress);
+    }
+
+    private async persistToDisk(map: Map<string, Array<number>>): Promise<boolean> {
+        await fs.writeFile(path.join(process.cwd(), 'unonce.json'), JSON.stringify(Array.from(map.entries())));
+        return true;
+    }
+
+    private async readFromDisk(): Promise<boolean> {
+        const result = await fs.readFile(path.join(process.cwd(), 'unonce.json'), 'utf-8');
+        this._unconsumedNonces = new Map<string, Array<number>>(JSON.parse(result.toString()));
+        return true;
     }
 
     private async getNonceFromChain(context: IBlockchainContext): Promise<number> {
