@@ -26,7 +26,7 @@ router.post('/', async (req, res, next) => {
     }
 });
 
-router.post('/unconfirmed', async (req, res, next) => {
+router.post('/unconsumed', async (req, res, next) => {
     const bc = new BlockchainContext(req.body.rpcEndpoint, req.body.accountAddress);
     try {
         if (req.query.nonceId !== undefined) {

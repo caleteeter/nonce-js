@@ -27,18 +27,18 @@ describe("Nonce manager tests", () => {
 
     it("Should return success for adding a new nonce as unconfirmed", async () => {
         let nm = new NonceManager();
-        let result = await nm.addUnconfirmedNonce(bc, 1);
+        let result = await nm.addUnconsumedNonce(bc, 1);
         expect(result.message).toBe("Added nonce to account 0x1");
     });
 
     it("Should return success for ordering unconfirmed nonces", async () => {
         let nm = new NonceManager();
 
-        let result1 = await nm.addUnconfirmedNonce(bc, 2);
-        let result2 = await nm.addUnconfirmedNonce(bc, 1);
-        let result3 = await nm.addUnconfirmedNonce(bc, 4);
-        let result4 = await nm.addUnconfirmedNonce(bc, 3);
-        let result5 = await nm.getUnconfirmedNonce(bc, true);
+        let result1 = await nm.addUnconsumedNonce(bc, 2);
+        let result2 = await nm.addUnconsumedNonce(bc, 1);
+        let result3 = await nm.addUnconsumedNonce(bc, 4);
+        let result4 = await nm.addUnconsumedNonce(bc, 3);
+        let result5 = await nm.getUnconsumedNonce(bc, true);
 
         expect(result1.message).toBe("Added nonce to account 0x1");
         expect(result2.message).toBe("Added nonce to account 0x1");
@@ -51,15 +51,15 @@ describe("Nonce manager tests", () => {
 
     it("Should fail to return unconfirmed nonce when non exists", async () => {
         let nm = new NonceManager();
-        let result = await nm.getUnconfirmedNonce(bc, true);
+        let result = await nm.getUnconsumedNonce(bc, true);
         expect(result).toBe(-1);
     });
 
     it("Should confirm clearing of unconfirmed nonces", async () => {
         let nm = new NonceManager();
-        let result1 = await nm.addUnconfirmedNonce(bc, 1);
-        let result2 = await nm.clearUnconfirmedNonce(bc);
-        let result3 = await nm.getUnconfirmedNonce(bc, true);
+        let result1 = await nm.addUnconsumedNonce(bc, 1);
+        let result2 = await nm.clearUnconsumedNonce(bc);
+        let result3 = await nm.getUnconsumedNonce(bc, true);
 
         expect(result1.message).toBe("Added nonce to account 0x1");
         expect(result2.message).toBe("Nonces for account 0x1 have been cleared.")
@@ -68,7 +68,7 @@ describe("Nonce manager tests", () => {
 
     it("Should pass to show using the unconfirmed nonces", async () => {
         let nm = new NonceManager();
-        await nm.addUnconfirmedNonce(bc, 1);
+        await nm.addUnconsumedNonce(bc, 1);
         let result = await nm.getNonce(bc);
 
         expect(result).toBe(1);

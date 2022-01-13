@@ -1,4 +1,5 @@
 // file nonce-mgr.ts
+
 import axios from 'axios';
 import * as fs from 'fs/promises';
 import * as path from 'path';
@@ -16,7 +17,7 @@ export class NonceManager {
     }
 
     async getNonce(context: IBlockchainContext): Promise<number | undefined> {
-        const uNonce = await this.getUnconfirmedNonce(context);
+        const uNonce = await this.getUnconsumedNonce(context);
         if (uNonce !== -1) {
             return (uNonce as number);
         }
@@ -47,7 +48,7 @@ export class NonceManager {
         return parseInt(nonceResult.data.result, 16);
     }
 
-    async getUnconfirmedNonce(context: IBlockchainContext, includeAll: boolean = false): Promise<number | number[]> {
+    async getUnconsumedNonce(context: IBlockchainContext, includeAll: boolean = false): Promise<number | number[]> {
         if (this._unconsumedNonces.has(context.accountAddress)) {
             if (includeAll) {
                 return (this._unconsumedNonces.get(context.accountAddress) as number[]).sort();
@@ -57,7 +58,7 @@ export class NonceManager {
         return -1;
     }
 
-    async addUnconfirmedNonce(context: IBlockchainContext, nonce: number): Promise<NonceResponse> {
+    async addUnconsumedNonce(context: IBlockchainContext, nonce: number): Promise<NonceResponse> {
         const currentNonces = this._unconsumedNonces.get(context.accountAddress);
 
         if (currentNonces as number[]) {
@@ -72,7 +73,7 @@ export class NonceManager {
         return { message: `Added nonce to account ${context.accountAddress}` };
     }
 
-    async clearUnconfirmedNonce(context: IBlockchainContext): Promise<NonceResponse> {
+    async clearUnconsumedNonce(context: IBlockchainContext): Promise<NonceResponse> {
         if (this._unconsumedNonces.has(context.accountAddress)) {
             this._unconsumedNonces.delete(context.accountAddress);
             return { message: `Nonces for account ${context.accountAddress} have been cleared.` };

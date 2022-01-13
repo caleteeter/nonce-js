@@ -1,6 +1,6 @@
 {
   "name": "@windozer/nonce-js",
-  "version": "0.1.7",
+  "version": "0.1.11",
   "main": "dist/index",
   "typings": "dist/index",
   "author": {
@@ -25,6 +25,7 @@
   "devDependencies": {
     "@types/jest": "^27.0.3",
     "@types/node": "^17.0.0",
+    "@types/web3": "^1.2.2",
     "jest": "^27.4.5",
     "ts-jest": "^27.1.2",
     "ts-node": "^10.4.0",
@@ -33,6 +34,7 @@
   },
   "dependencies": {
     "axios": "^0.24.0",
-    "jest-mock-extended": "^2.0.4"
+    "jest-mock-extended": "^2.0.4",
+    "web3": "^1.6.1"
   }
 }
